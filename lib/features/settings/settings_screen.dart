@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tapthedotgame/home.dart';
+import 'package:tapthedotgame/core/services/storage_service.dart';
 
-class Settings extends StatefulWidget {
-  const Settings({super.key});
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
 
   @override
-  State<Settings> createState() => _SettingsState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsState extends State<Settings> {
-  String difficulty = "Medium";
-  double roundDuration = 30;
-  double dotsPerRound = 10;
+class _SettingsScreenState extends State<SettingsScreen> {
+  late String difficulty;
+  late double roundDuration;
+  late double dotsPerRound;
 
   final List<String> difficulties = ["Easy", "Medium", "Hard", "Insane"];
 
@@ -22,38 +21,31 @@ class _SettingsState extends State<Settings> {
     loadSettings();
   }
 
-  Future<void> loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-
+  void loadSettings() {
     setState(() {
-      difficulty = prefs.getString('difficulty') ?? "Medium";
-      roundDuration = prefs.getDouble('roundDuration') ?? 30;
-      dotsPerRound = prefs.getDouble('dotsPerRound') ?? 10;
+      difficulty = StorageService.difficulty;
+      roundDuration = StorageService.roundDuration;
+      dotsPerRound = StorageService.dotsPerRound;
     });
   }
 
   Future<void> saveSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    prefs.setString('difficulty', difficulty);
-    prefs.setDouble('roundDuration', roundDuration);
-    prefs.setDouble('dotsPerRound', dotsPerRound);
+    await StorageService.setDifficulty(difficulty);
+    await StorageService.setRoundDuration(roundDuration);
+    await StorageService.setDotsPerRound(dotsPerRound);
   }
 
   @override
   Widget build(BuildContext context) {
-    List<DropdownMenuItem<String>> difficultyItems = [];
-    for (String level in difficulties) {
-      difficultyItems.add(
-        DropdownMenuItem(
-          value: level,
-          child: Text(
-            level,
-            style: const TextStyle(color: Colors.white),
-          ),
+    List<DropdownMenuItem<String>> difficultyItems = difficulties.map((level) {
+      return DropdownMenuItem(
+        value: level,
+        child: Text(
+          level,
+          style: const TextStyle(color: Colors.white),
         ),
       );
-    }
+    }).toList();
 
     return Scaffold(
       backgroundColor: Colors.blueGrey[900],
@@ -66,8 +58,9 @@ class _SettingsState extends State<Settings> {
         backgroundColor: Colors.blueGrey[800],
         centerTitle: true,
         leading: IconButton(
-          onPressed: () {
-            saveSettings();
+          onPressed: () async {
+            await saveSettings();
+            if (!mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 backgroundColor: Colors.white,

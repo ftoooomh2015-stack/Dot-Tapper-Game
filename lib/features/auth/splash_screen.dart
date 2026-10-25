@@ -1,42 +1,46 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tapthedotgame/login.dart';
-import 'main.dart';
+import 'package:tapthedotgame/core/services/storage_service.dart';
+import 'package:tapthedotgame/features/auth/login_screen.dart';
+import 'package:tapthedotgame/main.dart';
 
-class SplashPage extends StatefulWidget {
-  const SplashPage({super.key});
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
 
   @override
-  State<SplashPage> createState() => _SplashPageState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashPageState extends State<SplashPage> {
+class _SplashScreenState extends State<SplashScreen> {
   double progress = 0.0;
+
+  @override
   void initState() {
     super.initState();
 
-    Timer.periodic(const Duration(milliseconds: 80), (timer) async {
+    Timer.periodic(const Duration(milliseconds: 80), (timer) {
+      if (!mounted) return;
       setState(() => progress += 0.05);
-      final SharedPreferences login = await SharedPreferences.getInstance();
-      bool islogin = login.getBool("islogin")?? false;
 
       if (progress >= 1) {
         timer.cancel();
-        if(islogin){
+        bool isLogin = StorageService.isLogin;
+
+        if (isLogin) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => TapTheDot()),
+            MaterialPageRoute(builder: (_) => const TapTheDot()),
           );
-        }else{
+        } else {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => Login()),
+            MaterialPageRoute(builder: (_) => const LoginScreen()),
           );
         }
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +52,7 @@ class _SplashPageState extends State<SplashPage> {
             SizedBox(
               width: 140,
               height: 140,
-              child: Image.asset("images/img.jpg", ),
+              child: Image.asset("images/img.jpg"),
             ),
             const SizedBox(height: 30),
             SizedBox(

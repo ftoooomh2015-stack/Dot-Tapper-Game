@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class HowToPlay extends StatelessWidget {
-  const HowToPlay({super.key});
+class HowToPlayScreen extends StatelessWidget {
+  const HowToPlayScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,6 @@ class HowToPlay extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: ListView(
           children: [
-            // مقدمة
             const Text(
               "Welcome to Tap The Dot!",
               style: TextStyle(
@@ -34,8 +33,6 @@ class HowToPlay extends StatelessWidget {
               style: TextStyle(color: Colors.white70, fontSize: 16),
             ),
             const SizedBox(height: 30),
-
-            // خطوة 1
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
@@ -50,8 +47,6 @@ class HowToPlay extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 30),
-
-            // خطوة 2
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
@@ -66,8 +61,6 @@ class HowToPlay extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 30),
-
-            // خطوة 3
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
@@ -82,11 +75,9 @@ class HowToPlay extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 30),
-
-            // نصيحة
             const Text(
-                "Tip: Focus on the center and tap quickly! The dots move randomly and get faster with higher difficulty.",
-                style: TextStyle(color: Colors.white70, fontSize: 16,height: 1.5),
+              "Tip: Focus on the center and tap quickly! The dots move randomly and get faster with higher difficulty.",
+              style: TextStyle(color: Colors.white70, fontSize: 16, height: 1.5),
             ),
           ],
         ),

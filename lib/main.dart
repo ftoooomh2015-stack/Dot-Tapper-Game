@@ -1,9 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:tapthedotgame/home.dart';
-import 'package:tapthedotgame/howtoplay.dart';
-import 'package:tapthedotgame/settings.dart';
-import 'package:tapthedotgame/splash.dart';
-import 'package:tapthedotgame/stats.dart';
+import 'package:tapthedotgame/core/services/storage_service.dart';
+import 'package:tapthedotgame/features/auth/splash_screen.dart';
+import 'package:tapthedotgame/features/game/game_screen.dart';
+import 'package:tapthedotgame/features/how_to_play/how_to_play_screen.dart';
+import 'package:tapthedotgame/features/settings/settings_screen.dart';
+import 'package:tapthedotgame/features/stats/stats_screen.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await StorageService.init();
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Tap The Dot',
+      theme: ThemeData(
+        useMaterial3: false,
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: Colors.blueGrey[800],
+          selectedItemColor: Colors.cyanAccent,
+          unselectedItemColor: Colors.grey[400],
+        ),
+      ),
+      home: const SplashScreen(),
+    );
+  }
+}
 
 class TapTheDot extends StatefulWidget {
   const TapTheDot({super.key});
@@ -12,56 +40,39 @@ class TapTheDot extends StatefulWidget {
   State<TapTheDot> createState() => _TapTheDotState();
 }
 
-void main(){
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: SplashPage(),
-    theme: ThemeData(
-      useMaterial3: false,
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: Colors.blueGrey[800],
-        selectedItemColor: Colors.cyanAccent,
-        unselectedItemColor: Colors.grey[400],
-      ),
-    ),
-  ));
-}
-
 class _TapTheDotState extends State<TapTheDot> {
-  int myindex = 0;
+  int myIndex = 1; // جعل صفحة اللعب هي الافتراضية عند الدخول
+
   final List<Widget> pages = [
-    HowToPlay(
-      key: const ValueKey('HowToPlay'), // استخدام مفتاح لضمان إعادة البناء
-    ),
-    Home(
-      key: const ValueKey('Home'), // استخدام مفتاح لضمان إعادة البناء
-    ),
-    Stats(
-      key: const ValueKey('Stats'), // استخدام مفتاح لضمان إعادة البناء
-    ), // يمكن استخدام const إذا لم تكن لها حالة تتغير
-    Settings(
-      key: const ValueKey('Settings'), // استخدام مفتاح لضمان إعادة البناء
-    ),
+    const HowToPlayScreen(key: ValueKey('HowToPlay')),
+    const GameScreen(key: ValueKey('Game')),
+    const StatsScreen(key: ValueKey('Stats')),
+    const SettingsScreen(key: ValueKey('Settings')),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: pages[myindex],
+      body: IndexedStack(
+        index: myIndex,
+        children: pages,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        currentIndex: myindex,
+        currentIndex: myIndex,
         onTap: (index) {
           setState(() {
-            myindex = index;
+            myIndex = index;
           });
         },
-        iconSize: 40,
-        items: [
-          BottomNavigationBarItem(label: '', icon: Icon(Icons.help)),
-          BottomNavigationBarItem(label: '', icon: Icon(Icons.sports_esports)),
-          BottomNavigationBarItem(label: '', icon: Icon(Icons.bar_chart)),
-          BottomNavigationBarItem(label: '', icon: Icon(Icons.extension)),
+        iconSize: 30,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        items: const [
+          BottomNavigationBarItem(label: 'Help', icon: Icon(Icons.help_outline)),
+          BottomNavigationBarItem(label: 'Play', icon: Icon(Icons.sports_esports)),
+          BottomNavigationBarItem(label: 'Stats', icon: Icon(Icons.bar_chart)),
+          BottomNavigationBarItem(label: 'Settings', icon: Icon(Icons.settings)),
         ],
       ),
     );
